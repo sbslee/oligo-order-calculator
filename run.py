@@ -63,12 +63,21 @@ if __name__ == '__main__':
     order_dir = sys.argv[1]
     order_number = os.path.basename(order_dir)
 
+    excel_file = ''
+    pdf_file = ''
+
     for root, dirs, files in os.walk(order_dir):
         for file in files:
             if "고객주문내역" in file:
                 excel_file = file # 주문조회
             elif "오더시스템" in file:
                 pdf_file = file # 출하조회
+
+    if not excel_file:
+        raise ValueError("Excel file not found")
+    
+    if not pdf_file:
+        raise ValueError("PDF file not found")
 
     df1 = pd.read_excel(f'{order_dir}/{excel_file}', engine='openpyxl')
 
