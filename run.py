@@ -68,9 +68,13 @@ if __name__ == '__main__':
 
     for root, dirs, files in os.walk(order_dir):
         for file in files:
-            if "고객주문내역" in file:
+            if file.endswith('.xlsx'):
+                if excel_file:
+                    raise ValueError("Multiple excel files found")
                 excel_file = file # 주문조회
-            elif "오더시스템" in file:
+            elif file.endswith('.pdf'):
+                if pdf_file:
+                    raise ValueError("Multiple pdf files found")
                 pdf_file = file # 출하조회
 
     if not excel_file:
