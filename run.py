@@ -7,25 +7,21 @@ import pandas as pd
 
 INSTRUCTION = """I'm going to provide a list of items. Your task is to identify the item that matches most perfectly to the given string. Even if you're not confident, you must pick an item. Only return the index of the matching string in the list without any explanations. In fact, the returned output must be a single integer. Below are some examples.
 
-Names: ['5`JOE-3`BHQ1', '5`CY5.5-3`BHQ2(0.2)', 'Modified primer synthesis 0.2 umoles', 'Modified 0.2 umoles oligo purification HPLC', '5`CY5 -3`BHQ-2']
+Names: ['5`JOE-3`BHQ1', '5`CY5.5-3`BHQ2(0.2)', '5`CY5 -3`BHQ-2']
 String: '5`JOE-3`BHQ1'
 Return: 0
 
-Names: ['5`JOE-3`BHQ1', '5`CY5.5-3`BHQ2(0.2)', 'Modified primer synthesis 0.2 umoles', 'Modified 0.2 umoles oligo purification HPLC', '5`CY5 -3`BHQ-2']
+Names: ['5`JOE-3`BHQ1', '5`CY5.5-3`BHQ2(0.2)', '5`CY5 -3`BHQ-2']
 String: '5`CY5-3`BHQ2'
-Return: 4
+Return: 2
 
-Names: ['5`JOE-3`BHQ1', '5`CY5.5-3`BHQ2(0.2)', 'Modified primer synthesis 0.2 umoles', 'Modified 0.2 umoles oligo purification HPLC', '5`CY5 -3`BHQ-2']
+Names: ['5`JOE-3`BHQ1', '5`CY5.5-3`BHQ2(0.2)', '5`CY5 -3`BHQ-2']
 String: '5`CY5.5-3`BHQ2'
 Return: 1
 
-Names: ['5`CY5.5-3`BHQ2(0.2)', 'Modified primer synthesis 0.2 umoles', 'Modified 0.2 umoles oligo purification HPLC']
-String: '5`CY5.5-3`BHQ2'
-Return: 0
-
-Names: ['Modified primer synthesis 0.2 umoles', 'Modified 0.2 umoles oligo purification HPLC', '5`FAM-3`BHQ1', '5`CY5 -3`BHQ-2']
+Names: ['5`FAM-3`BHQ1', '5`CY5 -3`BHQ-2']
 String: '5`CY5-3`BHQ2'
-Return: 3
+Return: 1
 
 Now it's your turn:"""
 
@@ -39,6 +35,10 @@ def compute_cost_mod(df, mod5, mod3, debug):
     """
     Uses OpenAI API to find the best matching string in the list of names.
     """
+    df = df[~df.품명.str.contains('synthesis')]
+    df = df[~df.품명.str.contains('purification')]
+    if df.shape[0] == 1:
+        return df.iloc[0]['단가']
     prompt = INSTRUCTION + f"\n\nNames: {df.품명.to_list()}\nString: '{mod5}-{mod3}'"
     bot_response = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
