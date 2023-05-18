@@ -35,7 +35,7 @@ def compute_cost_syn(df, amount):
         raise ValueError("Multiple rows found for primer synthesis")
     return s.values[0]
 
-def compute_cost_mod(df, mod5, mod3):
+def compute_cost_mod(df, mod5, mod3, debug):
     """
     Uses OpenAI API to find the best matching string in the list of names.
     """
@@ -46,9 +46,10 @@ def compute_cost_mod(df, mod5, mod3):
         messages=[{"role": "system", "content": prompt}]
     )
     i = bot_response["choices"][0]["message"]["content"]
-    # print('-' * 80)
-    # print(prompt)
-    # print(i)
+    if debug:
+        print('-' * 80)
+        print(prompt)
+        print(i)
     return df.iloc[int(i)]['단가']
 
 def compute_cost_pur(df, amount):
@@ -60,7 +61,18 @@ def compute_cost_pur(df, amount):
 if __name__ == '__main__':
     openai.api_key = os.environ['OPENAI_API_KEY']
 
-    order_dir = sys.argv[1]
+    if len(sys.argv) < 2:
+        raise ValueError("Please provide the order directory")
+    elif len(sys.argv) == 2:
+        order_dir = sys.argv[1]
+        debug = False
+    elif len(sys.argv) == 3:
+        if sys.argv[2] != '--debug':
+            raise ValueError(f"Invalid argument: {sys.argv[2]}")
+        order_dir = sys.argv[1]
+        debug = True
+    else:
+        raise ValueError("Too many arguments")
 
     if not os.path.exists(order_dir):
         raise ValueError("Order directory not found")
@@ -116,7 +128,7 @@ if __name__ == '__main__':
         mod5 = row["5`Mod"].strip()
         mod3 = row["3`Mod"].strip()
         cost_syn = compute_cost_syn(df2, amount)
-        cost_mod = compute_cost_mod(df2, mod5, mod3)
+        cost_mod = compute_cost_mod(df2, mod5, mod3, debug)
         cost_pur = compute_cost_pur(df2, amount)
         price = cost_syn * mer + cost_mod + cost_pur
         tax = price / 10
