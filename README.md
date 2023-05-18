@@ -3,7 +3,7 @@
 ## Installation
 
 ```
-$ conda create -n oligo-order-calculator python==3.11.3 openai==0.27.2 tabula-py==2.6.0 openpyxl==3.1.2
+$ conda create -n oligo-order-calculator python openai tabula-py openpyxl
 $ git clone https://github.com/sbslee/oligo-order-calculator
 ```
 
