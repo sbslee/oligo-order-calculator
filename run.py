@@ -131,7 +131,7 @@ if __name__ == '__main__':
         cost_mod = compute_cost_mod(df2, mod5, mod3, debug)
         cost_pur = compute_cost_pur(df2, amount)
         price = cost_syn * mer + cost_mod + cost_pur
-        tax = price / 10
+        tax = int(price / 10)
         expected_total += price + tax
         data[oligo] = {
             '규격': f"{amount}umole",
