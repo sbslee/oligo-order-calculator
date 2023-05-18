@@ -61,6 +61,10 @@ if __name__ == '__main__':
     openai.api_key = os.environ['OPENAI_API_KEY']
 
     order_dir = sys.argv[1]
+
+    if not os.path.exists(order_dir):
+        raise ValueError("Order directory not found")
+
     order_number = os.path.basename(order_dir)
 
     excel_file = ''
