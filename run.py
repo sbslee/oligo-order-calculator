@@ -68,6 +68,7 @@ if __name__ == '__main__':
 
     for root, dirs, files in os.walk(order_dir):
         for file in files:
+            print(file)
             if file.endswith('.xlsx'):
                 if excel_file:
                     raise ValueError("Multiple excel files found")
